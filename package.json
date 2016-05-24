@@ -21,7 +21,7 @@
   "homepage": "https://github.com/IvanEscamilla/Frontend_matchupdatesQC#readme",
   "scripts": {
     "start": "webpack-dev-server --config webpack-dev-server.config.js --progress --inline --colors",
-    "build": "webpack --config webpack-production.config.js --progress --colors",
+    "build:prod": "webpack --config webpack-production.config.js --progress --colors",
     "lint": "eslint src && echo \"eslint: no lint errors\"",
     "test": "mocha",
     "mkdir": "mkdir -p dist",

@@ -67,7 +67,7 @@ class Main extends React.Component {
           >
             1-2-3-4-5
           </Dialog>
-          <h1>test 3</h1>
+          <h1>test 4</h1>
           <h2>example project</h2>
           <RaisedButton
             label="Super Secret Password"
