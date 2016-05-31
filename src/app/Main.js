@@ -4,12 +4,20 @@
  */
 
 import React from 'react';
+import { hashHistory, Router, Route, IndexRoute } from 'react-router'
+
 import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import {deepOrange500} from 'material-ui/styles/colors';
 import FlatButton from 'material-ui/FlatButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+/*components*/
+import Login from "./components/Login"
+
+/*services*/
+
 
 const styles = {
   container: {
@@ -24,60 +32,37 @@ const muiTheme = getMuiTheme({
   },
 });
 
-class Main extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    this.handleRequestClose = this.handleRequestClose.bind(this);
-    this.handleTouchTap = this.handleTouchTap.bind(this);
 
-    this.state = {
-      open: false,
-    };
+var Home = React.createClass({
+    render() 
+    {
+        return (<h1>Welcome to the Home Page</h1>);
+    } 
+});
+
+var view2 = React.createClass({
+  render() 
+  {
+    return (<h1>Welcome to the view2 Page</h1>);
+  } 
+});
+
+class Main extends React.Component 
+{
+
+  constructor() 
+  {
+    super();
   }
 
-  handleRequestClose() {
-    this.setState({
-      open: false,
-    });
-  }
-
-  handleTouchTap() {
-    this.setState({
-      open: true,
-    });
-  }
-
-  render() {
-    const standardActions = (
-      <FlatButton
-        label="Ok"
-        secondary={true}
-        onTouchTap={this.handleRequestClose}
-      />
-    );
-
+  render() 
+  {
     return (
-      <MuiThemeProvider muiTheme={muiTheme}>
-        <div style={styles.container}>
-          <Dialog
-            open={this.state.open}
-            title="Super Secret Password test"
-            actions={standardActions}
-            onRequestClose={this.handleRequestClose}
-          >
-            1-2-3-4-5
-          </Dialog>
-          <h1>test 4</h1>
-          <h2>example project</h2>
-          <RaisedButton
-            label="Super Secret Password"
-            primary={true}
-            onTouchTap={this.handleTouchTap}
-          />
-        </div>
-
+      <Router  history={hashHistory}>
+        <Route path="/" component={Login}>
         
-      </MuiThemeProvider>
+        </Route>
+      </Router>    
     );
   }
 }

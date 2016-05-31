@@ -12,7 +12,7 @@ const config = {
     //node_modules: ["web_modules", "node_modules"]  (Default Settings)
   },
   //Render source-map file for final build
-  devtool: 'source-map',
+  devtool: 'cheap-module-source-map',
   //output config
   output: {
     path: buildPath,    //Path of output file
@@ -25,6 +25,11 @@ const config = {
         //supresses warnings, usually from module minification
         warnings: false,
       },
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
     }),
     //Allows error warnings but does not stop compiling. Will remove when eslint is added
     new webpack.NoErrorsPlugin(),
