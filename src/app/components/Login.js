@@ -1,12 +1,13 @@
 import React from "react";
-import Paper from "material-ui/Paper"
+import axios from "axios";
+import Paper from "material-ui/Paper";
 import {deepOrange500} from 'material-ui/styles/colors';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-
-const webroute = "http://localhost:120/";
+import querystring from 'querystring';
+import { WEBROUTE } from "../constants/ServicesRoute"
 
 const LoginStyles = {
   loginForm: {
@@ -22,6 +23,13 @@ const LoginStyles = {
   },
   loginButton: {
     margin: 12,
+  },
+  bg: {
+    display: 'flex',
+    backgroundImage: "url('http://www.calientefutgol.mx/res/landing/img/backgrounds/Fondo@2x.jpg')",
+    backgroundColor: "#000000",
+    height: 100+'vh',
+    width: 100+'vw',
   }
 };
 
@@ -31,53 +39,67 @@ const muiTheme = getMuiTheme({
   },
 });
 
+function setAdminKey(newState) {
+  return {
+    type: 'SET_ADMINKEY',
+    newState
+  }
+}
+
+function setLoggedIn(newState) {
+  return {
+    type: 'SET_LOGGEDIN',
+    newState
+  }
+}
+
 export default class Login extends React.Component {
 
   constructor() {
     super();
     this.state = {
       userName: "",
-      password: ""
+      password: "",
+      adminKey: "",
+      isLogged: false
     };
   }
 
   getChildContext() {
       return { muiTheme: getMuiTheme(muiTheme) };
   }
-
-  handleLogin(userName, password) 
+  
+  handleLogin() 
   {
-    $.post(webroute + 'matchpanel/login',
-    {
-        data: JSON.stringify({
-            timestamp: Math.round((new Date()).getTime() / 1000),
-            userName: this.state.userName,
-            password: this.state.password
-        })
-    },
-    function(response)
-    {
-        if(response.responseStatus = "OK")
-        {
-          console.log(response);
-        }
+    var that = this;
+    var route = WEBROUTE + 'matchpanel/login';
+    var { store } = this.context;
+    var { router } = this.context;
+    var props = this.props;
 
-    }, 'json')
-    .fail(function(e)
+    axios.post(route, querystring.stringify({
+      data: JSON.stringify({
+                timestamp: Math.round((new Date()).getTime() / 1000),
+                userName: this.state.userName,
+                password: this.state.password})}),
     {
-        console.log(e);
+      headers: {"Content-Type": "application/x-www-form-urlencoded"}
+    }).then(function (response) 
+    {
+      if(response.responseStatus = "OK")
+      {
+        store.dispatch(setAdminKey(response.data.user.adminKey));
+        store.dispatch(setLoggedIn(true));
+        localStorage.setItem("isLogged", true);
+        localStorage.setItem("key", response.data.user.adminKey);
+        router.push('/matches');
+      }
+
+    }).catch(function (response) 
+    {
+      console.log(response);
     });
- 
-  }
 
-  handleLoginSuccess(data){
-    if(data.responseStatus == "OK") {
-      console.log(data);
-    }
-  }
-
-  handleSubmitFailure(xhr, ajaxOptions, thrownError){
-     console.log(xhr, ajaxOptions, thrownError);
   }
 
   handleUserChange(event) {
@@ -89,32 +111,43 @@ export default class Login extends React.Component {
   }
 
   render() {
+    const props = this.props;
+    const { store } = this.context;
+    const state = store.getState();
+
     return (
-      <div style={LoginStyles.loginForm}>
-        <Paper style={LoginStyles.paper} zDepth={2}>
-          <form>
-            <TextField
-              id="userField"
-              hintText=""
-              floatingLabelText="Usuario"
-              onChange={this.handleUserChange.bind(this)}
-            /><br />
-            <TextField
-              id="passwordField"
-              hintText=""
-              floatingLabelText="Contraseña"
-              type="password"
-              onChange={this.handlepassChange.bind(this)}
-            /><br />
-            <RaisedButton label="Login" onClick={this.handleLogin.bind(this)} primary={true} style={LoginStyles.loginButton} />
-          </form>
-        </Paper>
+      <div style={LoginStyles.bg}>
+        <div style={LoginStyles.loginForm}>
+          <Paper style={LoginStyles.paper} zDepth={2}>
+            <form>
+              <TextField
+                id="userField"
+                hintText=""
+                floatingLabelText="Nombre de Usuario"
+                onChange={this.handleUserChange.bind(this)}
+              /><br />
+              <TextField
+                id="passwordField"
+                hintText=""
+                floatingLabelText="Contraseña"
+                type="password"
+                onChange={this.handlepassChange.bind(this)}
+              /><br />
+              <RaisedButton label="Login" onClick={this.handleLogin.bind(this)} primary={true} style={LoginStyles.loginButton} />
+            </form>
+          </Paper>
+        </div>
       </div>
     );
   }
 }
 
- Login.childContextTypes = {
+Login.childContextTypes = {
     muiTheme: React.PropTypes.object.isRequired,
+};
+
+Login.contextTypes = {
+    store: React.PropTypes.object,
+    router: React.PropTypes.object.isRequired    
 };
 
