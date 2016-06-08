@@ -19,17 +19,12 @@ import Match from "./Matchitem";
 import MatchesStore from "../store/MatchesStores";
 import * as MatchesActions from "../actions/MatchesActions";
 
-const webroute = "http://localhost:120/";
-/*const webroute = "http://www.calientefutgol.mx/";*/
-
 const styles = {
   container: {
-    textAlign: 'center',
     margin: 30,
     marginTop: 15,
     display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
+    flexWrap: "wrap",
   },
 };
 
@@ -77,15 +72,14 @@ export default class Matchview extends React.Component {
   }
 
   componentDidMount(){
-
     MatchesActions.getallMatches(localStorage.getItem("key"));
     MatchesActions.getallTeams(localStorage.getItem("key"));
   }
 
 
   getMatches() {
-    console.log(this.state);
     MatchesActions.getallMatches(localStorage.getItem("key"));
+    MatchesActions.getallTeams(localStorage.getItem("key"));
   }
 
   singOut() {
@@ -100,7 +94,6 @@ export default class Matchview extends React.Component {
     const {teamArr} = this.state;
     const matchesComponentes = matchesArr.map((match, i) => <Match key={i} match={match} teams = {teamArr}/>);
     const { store } = this.context;
-    this.state.userAdmin = store.getState();
     
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
